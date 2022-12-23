@@ -19,6 +19,8 @@ public class Exam {
 
     private Date date;
 
+    private Integer mark;
+
     @ManyToMany
     @JoinTable(
             name = "Exam_Students",
