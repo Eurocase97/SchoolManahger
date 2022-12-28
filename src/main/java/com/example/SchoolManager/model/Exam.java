@@ -21,6 +21,8 @@ public class Exam {
 
     private Integer mark;
 
+    private String name;
+
     @ManyToMany
     @JoinTable(
             name = "Exam_Students",
@@ -32,4 +34,5 @@ public class Exam {
     @JoinColumn(name="subject_id")
     @JsonIgnore
     private  Subject subject;
+
 }

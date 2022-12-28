@@ -47,4 +47,9 @@ public class StudentController {
         return studentService.getAllExams(id, page, size);
     }
 
+    @PostMapping("/{studentId}/subject/{subjectId}")
+    public ResponseEntity<Student> addSubject(@PathVariable Long studentId, @PathVariable Long subjectId ){
+        return studentService.addSubject(studentId,subjectId);
+    }
+
 }

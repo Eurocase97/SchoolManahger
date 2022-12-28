@@ -2,6 +2,7 @@ package com.example.SchoolManager.controller;
 
 import com.example.SchoolManager.model.Student;
 import com.example.SchoolManager.model.Subject;
+import com.example.SchoolManager.model.Teacher;
 import com.example.SchoolManager.service.SubjectService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class SubjectController {
     }
 
     @PostMapping
-    public Subject createStudent(@RequestBody Subject subject) {
+    public ResponseEntity<Subject> createStudent(@RequestBody Subject subject) {
 
         return subjectService.save(subject);
     }
@@ -28,5 +29,16 @@ public class SubjectController {
                                                         @RequestParam(value ="size", required = false, defaultValue ="10") int size){
         return subjectService.getAllSubject(page, size);
     }
-    
+
+    @PostMapping("{subjectId}/teacher/{teacherId}")
+    public ResponseEntity<Subject> addTeacherToSubject(@PathVariable Long subjectId, @PathVariable Long teacherId ){
+        return subjectService.addTeacherToSubject(subjectId, teacherId);
+    }
+
+    @GetMapping("{subjectId}/teacher")
+    public ResponseEntity<Teacher> getTeacherToSubject(@PathVariable Long subjectId){
+        return subjectService.getTeacherToSubject(subjectId);
+    }
+
+
 }

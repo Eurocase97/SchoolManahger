@@ -15,8 +15,14 @@ public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private String name;
+
     @OneToMany(mappedBy="teacher")
     @JsonIgnore
     private Set<Subject> subjects;
+
+    public boolean addSubject(Subject subject) {
+        return subjects.add(subject);
+    }
 }
