@@ -1,7 +1,10 @@
 package com.example.SchoolManager.service;
 
+import com.example.SchoolManager.model.Exam;
+import com.example.SchoolManager.model.Student;
 import com.example.SchoolManager.model.Subject;
 import com.example.SchoolManager.model.Teacher;
+import com.example.SchoolManager.repository.ExamRepository;
 import com.example.SchoolManager.repository.SubjectRepository;
 import com.example.SchoolManager.repository.TeacherRepository;
 import org.springframework.data.domain.Page;
@@ -13,16 +16,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class SubjectService {
     private final SubjectRepository subjectRepository;
 
     private final TeacherRepository teacherRepository;
+    private final ExamRepository examRepository;
 
-    public SubjectService(SubjectRepository subjectRepository, TeacherRepository teacherRepository) {
+    public SubjectService(SubjectRepository subjectRepository, TeacherRepository teacherRepository,
+                          ExamRepository examRepository) {
         this.subjectRepository = subjectRepository;
         this.teacherRepository = teacherRepository;
+        this.examRepository = examRepository;
     }
 
     public ResponseEntity<Subject> save(Subject subject) {
@@ -50,7 +57,6 @@ public class SubjectService {
        if(subject.get().getTeacher() == null){
            subject.get().setTeacher(teacher.get());
            subjectRepository.save(subject.get());
-           teacherRepository.save(teacher.get());
            return new ResponseEntity<>(subject.get() , HttpStatus.OK);
        }else {
            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"This subject already have a teacher");
@@ -68,5 +74,43 @@ public class SubjectService {
         }
 
         return new ResponseEntity<>(subject.get().getTeacher() , HttpStatus.OK);
+    }
+
+    public ResponseEntity<Set<Student>> getStudentAssigned(int page, int size, long id) {
+        Optional<Subject> subject= subjectRepository.findById(id);
+        if(subject.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Something wrong with the id sent");
+        }
+
+        if(subject.get().getStudents() == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"No one enrolled");
+        }
+
+        return new ResponseEntity<>(subject.get().getStudents() , HttpStatus.OK);
+    }
+
+    public ResponseEntity<Exam> createExam(Long subjectId, Exam exam) {
+        Optional<Subject> subject = subjectRepository.findById(subjectId);
+        if(subject.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Something wrong with the id sent");
+        }
+        exam.setSubject(subject.get());
+       if(subject.get().addExam(exam)){
+            subjectRepository.save(subject.get());
+            examRepository.save(exam);
+            return new ResponseEntity<>(exam , HttpStatus.OK);
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Something wrong");
+    }
+
+    public ResponseEntity<Set<Exam>> getExamAssignedToSubject(Long subjectId) {
+        Optional<Subject> subject = subjectRepository.findById(subjectId);
+        if(subject.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Something wrong with the id sent");
+        }
+        if(subject.get().getExams()==null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"No exam assigned");
+        }
+        return new ResponseEntity<>(subject.get().getExams() , HttpStatus.OK);
     }
 }

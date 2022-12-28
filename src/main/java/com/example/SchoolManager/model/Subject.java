@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sun.istack.NotNull;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -12,7 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 public class Subject {
     @Id
@@ -37,6 +40,8 @@ public class Subject {
     @JsonIgnore
     private Teacher teacher;
     public boolean addStudent(Student student) {
-        return students.add(student);
+        return this.students.add(student);
     }
+
+    public boolean addExam(Exam exam){return this.exams.add(exam);}
 }

@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class StudentService {
@@ -83,4 +85,19 @@ public class StudentService {
         return new ResponseEntity<>(studentRepository.save(student) ,HttpStatus.OK) ;
     }
 
+    public ResponseEntity<Set<Exam>> getExamAssignedToStudent(Long studentId) {
+        Set<Exam> examAssigned = new HashSet<>();
+        Optional<Student> studentOptional= studentRepository.findById(studentId);
+
+        if(studentOptional.isEmpty()){
+            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "student not found");
+        }
+
+        for(Subject s: studentOptional.get().getSubjects()){
+           for(Exam e : s.getExams()){
+               examAssigned.add(e);
+           }
+        }
+        return new ResponseEntity<>(examAssigned ,HttpStatus.OK) ;
+    }
 }

@@ -16,10 +16,10 @@ public class ExamController {
         this.examService = examService;
     }
 
-    @PostMapping
+   /* @PostMapping
     public ResponseEntity<Exam> createTeacher(@RequestBody Exam exam) {
         return examService.save(exam);
-    }
+    }*/
 
     @GetMapping()
     public ResponseEntity<Page<Exam>> getAllTeacher(@RequestParam(value = "page", required = false, defaultValue ="0") int page,

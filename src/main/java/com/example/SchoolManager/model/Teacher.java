@@ -2,15 +2,19 @@ package com.example.SchoolManager.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,9 +24,9 @@ public class Teacher {
 
     @OneToMany(mappedBy="teacher")
     @JsonIgnore
-    private Set<Subject> subjects;
+    private Set<Subject> subjects = new HashSet<Subject>();
 
     public boolean addSubject(Subject subject) {
-        return subjects.add(subject);
+        return this.subjects.add(subject);
     }
 }

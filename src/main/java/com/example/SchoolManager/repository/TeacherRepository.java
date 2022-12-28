@@ -1,6 +1,5 @@
 package com.example.SchoolManager.repository;
 
-import com.example.SchoolManager.model.Subject;
 import com.example.SchoolManager.model.Teacher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

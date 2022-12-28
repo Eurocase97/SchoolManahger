@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/student")
 public class StudentController {
@@ -52,4 +54,8 @@ public class StudentController {
         return studentService.addSubject(studentId,subjectId);
     }
 
+    @GetMapping("/{studentId}/GetAllExam")
+    public ResponseEntity<Set<Exam>> getAllExam(@PathVariable Long studentId){
+        return studentService.getExamAssignedToStudent(studentId);
+     }
 }

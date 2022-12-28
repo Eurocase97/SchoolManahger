@@ -1,15 +1,13 @@
 package com.example.SchoolManager.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -22,9 +20,10 @@ public class Student {
 
     private String identityCardNumber ;
 
+    /// @ElementCollection(targetClass= Subject.class)
+
     @ManyToMany(mappedBy="students", fetch = FetchType.LAZY)
     @JsonIgnore
-    @ElementCollection(targetClass= Subject.class)
     private Set<Subject> subjects;
 
     @ManyToMany(mappedBy="students")
