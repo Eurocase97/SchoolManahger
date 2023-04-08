@@ -1,7 +1,10 @@
 package com.example.SchoolManager.service;
 
+import com.example.SchoolManager.model.Exam;
 import com.example.SchoolManager.model.Subject;
 import com.example.SchoolManager.model.Teacher;
+import com.example.SchoolManager.repository.ExamRepository;
+import com.example.SchoolManager.repository.SubjectRepository;
 import com.example.SchoolManager.repository.TeacherRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,9 +22,14 @@ import java.util.Set;
 public class TeacherService {
 
     private final TeacherRepository teacherRepository;
+    private final ExamRepository examRepository;
+    private final SubjectRepository subjectRepository;
 
-    public TeacherService(TeacherRepository teacherRepository) {
+    public TeacherService(TeacherRepository teacherRepository, ExamRepository examRepository,
+                          SubjectRepository subjectRepository) {
         this.teacherRepository = teacherRepository;
+        this.examRepository = examRepository;
+        this.subjectRepository = subjectRepository;
     }
 
     public ResponseEntity<Teacher> save(Teacher teacher) {
@@ -44,9 +53,30 @@ public class TeacherService {
         }
 
         if(teacher.get().getSubjects().isEmpty()){
-            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "Has not subject assigned");
+
         }
 
-        return new ResponseEntity<>(teacher.get().getSubjects() , HttpStatus.OK);
+        return new ResponseEntity<>(teacher.get().getSubjects(), HttpStatus.OK);
+    }
+
+    public ResponseEntity<Exam> createExam(Long id, Long idSubject, LocalDateTime date, String examName) {
+        Optional<Teacher> teacher = teacherRepository.findById(id);
+        if(teacher.isEmpty()){
+            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something gone wrong with teacher id");
+        }
+        Optional<Subject> subject = subjectRepository.findById(idSubject);
+        if(subject.isEmpty()){
+            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something gone wrong with subject id");
+        }
+        if(subject.get().getTeacher().equals(teacher.get())){
+            Exam exam = new Exam();
+            exam.setDate(date);
+            exam.setName(examName);
+            subject.get().addExam(exam);
+            return new ResponseEntity<>(exam, HttpStatus.OK);
+
+        }else {
+            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "professor and subject not match");
+        }
     }
 }

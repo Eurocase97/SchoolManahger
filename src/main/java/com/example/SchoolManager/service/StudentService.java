@@ -8,7 +8,6 @@ import com.example.SchoolManager.repository.SubjectRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -24,8 +24,7 @@ public class StudentService {
 
     private final SubjectRepository subjectRepository;
 
-    public StudentService(StudentRepository studentRepository,
-                          SubjectRepository subjectRepository, SubjectRepository subjectRepository1) {
+    public StudentService(StudentRepository studentRepository, SubjectRepository subjectRepository1) {
         this.studentRepository = studentRepository;
         this.subjectRepository = subjectRepository1;
     }
@@ -79,7 +78,7 @@ public class StudentService {
 
         Student student = studentOptional.get();
         if (!student.addSubject(subject.get()) || !subject.get().addStudent(student)){
-            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student already ");
+            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student already assigned ");
         }
 
         return new ResponseEntity<>(studentRepository.save(student) ,HttpStatus.OK) ;
@@ -92,12 +91,12 @@ public class StudentService {
         if(studentOptional.isEmpty()){
             throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "student not found");
         }
-
+        /*
         for(Subject s: studentOptional.get().getSubjects()){
-           for(Exam e : s.getExams()){
-               examAssigned.add(e);
-           }
-        }
+            examAssigned.addAll(s.getExams());
+        }*/
+
+        examAssigned = studentOptional.get().getSubjects().stream().flatMap(subject -> subject.getExams().stream()).collect(Collectors.toSet());
         return new ResponseEntity<>(examAssigned ,HttpStatus.OK) ;
     }
 }

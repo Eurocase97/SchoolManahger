@@ -5,6 +5,7 @@ import com.example.SchoolManager.model.Student;
 import com.example.SchoolManager.model.Subject;
 import com.example.SchoolManager.model.Teacher;
 import com.example.SchoolManager.repository.ExamRepository;
+import com.example.SchoolManager.repository.StudentRepository;
 import com.example.SchoolManager.repository.SubjectRepository;
 import com.example.SchoolManager.repository.TeacherRepository;
 import org.springframework.data.domain.Page;
@@ -24,12 +25,15 @@ public class SubjectService {
 
     private final TeacherRepository teacherRepository;
     private final ExamRepository examRepository;
+    private final StudentRepository studentRepository;
 
     public SubjectService(SubjectRepository subjectRepository, TeacherRepository teacherRepository,
-                          ExamRepository examRepository) {
+                          ExamRepository examRepository,
+                          StudentRepository studentRepository) {
         this.subjectRepository = subjectRepository;
         this.teacherRepository = teacherRepository;
         this.examRepository = examRepository;
+        this.studentRepository = studentRepository;
     }
 
     public ResponseEntity<Subject> save(Subject subject) {
@@ -76,8 +80,8 @@ public class SubjectService {
         return new ResponseEntity<>(subject.get().getTeacher() , HttpStatus.OK);
     }
 
-    public ResponseEntity<Set<Student>> getStudentAssigned(int page, int size, long id) {
-        Optional<Subject> subject= subjectRepository.findById(id);
+    public ResponseEntity<Page<Student>> getStudentAssigned(int page, int size, long id) {
+        /*Optional<Subject> subject= subjectRepository.findById(id);
         if(subject.isEmpty()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Something wrong with the id sent");
         }
@@ -86,7 +90,11 @@ public class SubjectService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"No one enrolled");
         }
 
-        return new ResponseEntity<>(subject.get().getStudents() , HttpStatus.OK);
+        return new ResponseEntity<>(subject.get().getStudents() , HttpStatus.OK);*/
+
+        Pageable paging = PageRequest.of(page, size);
+        Page<Student> studentList= subjectRepository.getAllStudents(paging, id);
+        return new ResponseEntity<>(studentList , HttpStatus.OK);
     }
 
     public ResponseEntity<Exam> createExam(Long subjectId, Exam exam) {
@@ -112,5 +120,15 @@ public class SubjectService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"No exam assigned");
         }
         return new ResponseEntity<>(subject.get().getExams() , HttpStatus.OK);
+    }
+
+    public ResponseEntity<Subject> getSubject(Long subjectId) {
+        Optional<Subject> subject = subjectRepository.findById(subjectId);
+
+        if(subject.get() == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Something wrong with the id sent");
+        }
+
+        return new ResponseEntity<>(subject.get() , HttpStatus.OK);
     }
 }

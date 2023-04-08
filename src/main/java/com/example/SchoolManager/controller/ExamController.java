@@ -1,7 +1,6 @@
 package com.example.SchoolManager.controller;
 
 import com.example.SchoolManager.model.Exam;
-import com.example.SchoolManager.model.Teacher;
 import com.example.SchoolManager.service.ExamService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

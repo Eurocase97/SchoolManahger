@@ -1,5 +1,6 @@
 package com.example.SchoolManager.controller;
 
+import com.example.SchoolManager.model.Exam;
 import com.example.SchoolManager.model.Subject;
 import com.example.SchoolManager.model.Teacher;
 import com.example.SchoolManager.service.TeacherService;
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @RestController
@@ -29,8 +31,13 @@ public class TeacherController {
         return teacherService.getAllTeacher(page, size);
     }
 
-    @GetMapping("/{id}/subject")
+    @GetMapping("/{id}/subject/")
     public ResponseEntity<Set<Subject>> getSubjectAssigned(@PathVariable Long id){
         return teacherService.getAllSubjectAssignedToTeacher(id);
+    }
+
+    @PostMapping("/{id}/subject/{idSubject}/exam")
+    public ResponseEntity<Exam> createNewExam(@PathVariable Long id, @PathVariable Long idSubject , @RequestParam(value = "date", required = false) LocalDateTime date, @RequestParam(value = "examName", required = false)String examName){
+        return teacherService.createExam(id, idSubject ,date, examName);
     }
 }

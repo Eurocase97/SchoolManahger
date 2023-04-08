@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ public class Exam {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Date date;
+    private LocalDateTime date;
 
     private Integer mark;
 
@@ -34,5 +35,4 @@ public class Exam {
     @JoinColumn(name="subject_id")
     @JsonIgnore
     private  Subject subject;
-
 }

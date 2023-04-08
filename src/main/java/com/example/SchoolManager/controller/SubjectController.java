@@ -8,7 +8,6 @@ import com.example.SchoolManager.service.SubjectService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Set;
 
 @RestController
@@ -33,6 +32,11 @@ public class SubjectController {
         return subjectService.getAllSubject(page, size);
     }
 
+    @GetMapping("{subjectId}")
+    public ResponseEntity<Subject> getSubject(@PathVariable Long subjectId){
+        return subjectService.getSubject(subjectId);
+    }
+
     @PostMapping("{subjectId}/teacher/{teacherId}")
     public ResponseEntity<Subject> addTeacherToSubject(@PathVariable Long subjectId, @PathVariable Long teacherId ){
         return subjectService.addTeacherToSubject(subjectId, teacherId);
@@ -44,7 +48,7 @@ public class SubjectController {
     }
 
     @GetMapping("/{subjectId}/students")
-    public ResponseEntity<Set<Student>> getStudentAssigned(@RequestParam(value = "page", required = false, defaultValue ="0") int page,
+    public ResponseEntity<Page<Student>> getStudentAssigned(@RequestParam(value = "page", required = false, defaultValue ="0") int page,
                                                            @RequestParam(value ="size", required = false, defaultValue ="10") int size,
                                                            @PathVariable long subjectId){
         return subjectService.getStudentAssigned(page, size, subjectId);
@@ -59,4 +63,5 @@ public class SubjectController {
     public ResponseEntity<Set<Exam>> getExam(@PathVariable Long subjectId){
         return subjectService.getExamAssignedToSubject(subjectId);
     }
+
 }
